@@ -4,7 +4,7 @@ The word is made using the letters that would appear on a number pad for the dig
 This program is meant to help a person who is choosing an available 1-800 number for their company.
 It will take a phone number as an input and find all of the words that can be spelled with those digits."""
 
-import enchant, random
+import enchant
 
 word_list = enchant.Dict("en_US")
 letter_assignments = {
@@ -25,13 +25,6 @@ class InvalidPhoneNumber(Exception):
     def __init__(self, message="The input is not a valid phone number"):
         super().__init__()
         self.message = message
-
-# Nerfed: Will retrieve available phone numbers and return them as a list of strings. 
-def get_available_phone_nums() -> list[str]:
-    available_phone_nums = []
-    for i in range(20):
-        available_phone_nums.append(str(random.randint(18000000000, 18009999999)))
-    return available_phone_nums
 
 # Strips 1-800 or 800 off of the input and makes sure that it is a valid number. 
 # Then returns number as a list of digit strings
@@ -125,27 +118,9 @@ def search_available_nums_for_word(word : str, available_nums : list[str]) -> st
             return None
 
 # TODO:
-# - make git repository
-# - move the find_available_numbers function to another module
 # - make nice clean function calls, possibly in another module
 # - write unit tests
 # - clean up testing print statements
 # - add a GUI
 # - look into how to actually find available 1-800 numbers
-
-
-# TESTING CALLS:
-# print(get_available_phone_nums())
-# print(find_num_for_word('pain'))
-# print(prepare_phone_number('18001234567'))
-
-# available_nums_w_pain = [['9', '9', '9', '7', '2', '4', '6']]
-# available_nums_without_pain = [['9', '9', '9', '9', '9', '9', '9'], ['1', '2', '3', '4', '5', '6', '7']]
-# print(search_available_nums_for_word('pain', available_nums_w_pain))
-# print(search_available_nums_for_word('pain', available_nums_without_pain))
-
-print(find_words_for_num(['9', '4', '6', '4', '2', '7', '6']))
-#   Should yield ['zingaro', 'arm', 'bpm', 'bro', 'harm', 'micro']
-
-# for phone_num in get_available_phone_nums():
-#     print(find_words(prepare_phone_number(phone_num)))
+# - tidy the find_available_numbers module
