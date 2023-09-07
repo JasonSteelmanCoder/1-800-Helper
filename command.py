@@ -2,21 +2,16 @@ import available_num_finder as anf
 import word_checker as wc
 import tkinter as tk
 
-def find_word_for_input(event=None):
-    user_input = search_box.get()
-    desired_num = wc.find_num_for_word(user_input)
-    for phone_number in anf.get_available_phone_nums():
-        if phone_number.endswith(desired_num):
-            return phone_number
-    return None
+class Search():
+    def __init__(self, search_term, event=None):
+        self.search_term = search_term
 
-def format_output(combos:dict) -> str:
-    combo_list = []
-    for item in combos.items():
-        combo_list.append(str(item))
-    combo_list.sort(key=len, reverse=True)
-    combo_str = "\n".join(combo_list)
-    return combo_str
+    def find_word_for_search_term(self):
+        desired_num = wc.find_num_for_word(self.search_term)
+        for phone_number in anf.get_available_phone_nums():
+            if phone_number.endswith(desired_num):
+                app.display_frame.display_search_results(phone_number)
+        app.display_frame.display_search_results(None)
 
 class DisplayFrame(tk.Frame):
     def __init__(self, master=None):
@@ -29,11 +24,15 @@ class DisplayFrame(tk.Frame):
         self.clear_display()
         search_directions = tk.Label(self, text="Enter a word here to see if it is available.\nNote: words must be 3-7 letters.")
         search_directions.pack(pady=40)
-        search_box = tk.Entry(self)
-        search_box.pack(padx=20, pady=0)
-        search_box.focus_set()
-        search_box.bind('<Return>', find_word_for_input)
-            
+        self.search_box = tk.Entry(self)
+        self.search_box.pack(padx=20, pady=0)
+        self.search_box.focus_set()
+        self.search_box.bind('<Return>', lambda event=None: self.start_search(event))
+
+    def start_search(self, event=None):
+        search = Search(self.search_box.get())
+        search.find_word_for_search_term()
+
     def show_available_words(self):
         self.clear_display()
         self.display_wait_message()
@@ -44,7 +43,7 @@ class DisplayFrame(tk.Frame):
             if temp_words:
                 temp_words.sort(key=len, reverse=True)
                 available_combos[num] = temp_words
-        formatted_output = format_output(available_combos)
+        formatted_output = self.format_output(available_combos)
         available_combos_label = tk.Label(self, text=formatted_output, justify=tk.LEFT)
         available_combos_label.pack(pady=20)
         self.destroy_wait_message()
@@ -63,6 +62,21 @@ class DisplayFrame(tk.Frame):
         for widget in leftovers:
             widget.destroy()
         self.update()
+
+    def format_output(self, combos:dict) -> str:
+        combo_list = []
+        for item in combos.items():
+            combo_list.append(str(item))
+        combo_list.sort(key=len, reverse=True)
+        combo_str = "\n".join(combo_list)
+        return combo_str
+    
+    def display_search_results(self, number_results):
+        if number_results:      # When the return is not None
+            search_results = tk.Label(self, text=f"The number you are looking for is available! It's {number_results}")
+        else:
+            search_results = tk.Label(self, text="Sorry. That number is not available.")
+        search_results.pack()
 
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
@@ -94,11 +108,10 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - move functions inside display frame
-# - handle the return from find_word_for_input. 
-#       If it returns None, tell the user the num is not available;
-#       if it returns the number, say 'Congratulations! Your number is available!'
-# - show available numbers while available words are loading
+# - make it display the number for your desired word, even when the word is not available
+# - add further directions when your word is not available (like look at the available nums)
+# - make it so that only one search result is visible at a time
+# - change anf so that it makes more numbers when you are looking for a specific word 
 # - clean up the comments
 # - write unit tests
 # - make other modules OOP
