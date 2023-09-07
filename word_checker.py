@@ -116,11 +116,3 @@ def search_available_nums_for_word(word : str, available_nums : list[str]) -> st
             return digit_list
         else:   # when the word cannot be made by the available numbers
             return None
-
-# TODO:
-# - make nice clean function calls, possibly in another module
-# - write unit tests
-# - clean up testing print statements
-# - add a GUI
-# - look into how to actually find available 1-800 numbers
-# - tidy the find_available_numbers module
