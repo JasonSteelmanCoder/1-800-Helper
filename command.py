@@ -9,12 +9,18 @@ class Search():
     def find_word_for_search_term(self):
         app.display_frame.clear_search_results()
         desired_num = wc.find_num_for_word(self.search_term)
+
         app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
         app.display_frame.desired_num_label.pack()
+        
         for phone_number in anf.get_available_phone_nums():
+            number_found = False
             if phone_number.endswith(desired_num):
+                number_found = True
                 app.display_frame.display_search_results(phone_number)
-        app.display_frame.display_search_results(None)
+                break
+        if number_found == False:
+            app.display_frame.display_search_results(None)
 
 class DisplayFrame(tk.Frame):
     def __init__(self, master=None):
@@ -77,15 +83,16 @@ class DisplayFrame(tk.Frame):
     def display_search_results(self, number_results):
         if number_results:      # When the return is not None
             search_results = tk.Label(self, text=f"The number you are looking for is available! It's {number_results}")
+            search_results.pack()
         else:
-            search_results = tk.Label(self, text="Sorry. That number is not available.")
-        search_results.pack()
+            sorry_message = tk.Label(self, text="Sorry. That number is not available.\nTry another word, OR\nPress the button on the left to see words that are available.")
+            sorry_message.pack()
+            print("creating sorry message.")
 
     def clear_search_results(self):
-        for index, widget in enumerate(self.winfo_children()):
-            if index > 1:       # indices 0 and 1 are the directions and search box, which we don't want to destroy.
-                widget.destroy()
-
+        for i in range(len(self.winfo_children())-1, -1, -1):
+            if i > 1:
+                self.winfo_children()[i].destroy()
 
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
@@ -121,7 +128,7 @@ if __name__ == "__main__":
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - clean up display format for list of available numbers
 # - stop looking for 3 letter words and get a larger number of words from anf
-# - change anf so that it makes more numbers when you are looking for a specific word
+# - change anf (and its caller) so that it makes more numbers when you are looking for a specific word
 # - fix the InvalidPhoneNumber exception in word_checker.py
 # - make other modules OOP
 # - write unit tests
