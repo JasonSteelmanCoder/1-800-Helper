@@ -7,7 +7,10 @@ class Search():
         self.search_term = search_term
 
     def find_word_for_search_term(self):
+        app.display_frame.clear_search_results()
         desired_num = wc.find_num_for_word(self.search_term)
+        app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
+        app.display_frame.desired_num_label.pack()
         for phone_number in anf.get_available_phone_nums():
             if phone_number.endswith(desired_num):
                 app.display_frame.display_search_results(phone_number)
@@ -78,6 +81,12 @@ class DisplayFrame(tk.Frame):
             search_results = tk.Label(self, text="Sorry. That number is not available.")
         search_results.pack()
 
+    def clear_search_results(self):
+        for index, widget in enumerate(self.winfo_children()):
+            if index > 1:       # indices 0 and 1 are the directions and search box, which we don't want to destroy.
+                widget.destroy()
+
+
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
         super().__init__()
@@ -108,13 +117,16 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - make it display the number for your desired word, even when the word is not available
 # - add further directions when your word is not available (like look at the available nums)
-# - make it so that only one search result is visible at a time
-# - change anf so that it makes more numbers when you are looking for a specific word 
-# - clean up the comments
-# - write unit tests
+# - add error handling for when users put in numbers that are too long, wrong type, etc.
+# - clean up display format for list of available numbers
+# - stop looking for 3 letter words and get a larger number of words from anf
+# - change anf so that it makes more numbers when you are looking for a specific word
+# - fix the InvalidPhoneNumber exception in word_checker.py
 # - make other modules OOP
+# - write unit tests
+# - clean up the comments
+# - add docstrings for each function
 
 
 
