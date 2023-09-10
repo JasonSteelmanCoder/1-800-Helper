@@ -87,7 +87,6 @@ class DisplayFrame(tk.Frame):
         else:
             sorry_message = tk.Label(self, text="Sorry. That number is not available.\nTry another word, OR\nPress the button on the left to see words that are available.")
             sorry_message.pack()
-            print("creating sorry message.")
 
     def clear_search_results(self):
         for i in range(len(self.winfo_children())-1, -1, -1):
@@ -124,9 +123,9 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - add further directions when your word is not available (like look at the available nums)
-# - add error handling for when users put in numbers that are too long, wrong type, etc.
+# - add layer where users can select the number they want to buy
 # - clean up display format for list of available numbers
+# - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - stop looking for 3 letter words and get a larger number of words from anf
 # - change anf (and its caller) so that it makes more numbers when you are looking for a specific word
 # - fix the InvalidPhoneNumber exception in word_checker.py
