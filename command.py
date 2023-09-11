@@ -1,6 +1,7 @@
 import available_num_finder as anf
 import word_checker as wc
 import tkinter as tk
+from chatgpt_api_caller import APICall
 
 class Search():
     def __init__(self, search_term, event=None):
@@ -13,7 +14,7 @@ class Search():
         app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
         app.display_frame.desired_num_label.pack()
         
-        for phone_number in anf.get_available_phone_nums():
+        for phone_number in anf.get_available_phone_nums_long():
             number_found = False
             if phone_number.endswith(desired_num):
                 number_found = True
@@ -46,7 +47,7 @@ class DisplayFrame(tk.Frame):
         self.clear_display()
         self.display_wait_message()
         available_combos = {}
-        for num in anf.get_available_phone_nums():
+        for num in anf.get_available_phone_nums_short():
             prepared_num = wc.prepare_phone_number(num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:
@@ -93,6 +94,31 @@ class DisplayFrame(tk.Frame):
             if i > 1:
                 self.winfo_children()[i].destroy()
 
+    def show_chat_screen(self):
+        self.clear_display()
+        self.chat_directions = tk.Label(self, pady=20, text="Write a short description of your organization.\nInclude aspects that you would like to highlight in your marketing.\nThen press enter.")
+        self.chat_directions.pack()
+        example_text = "Example: At Those Who Wander Travel Agency, we'll never get you lost."
+        self.chat_box = tk.Text(self, wrap="word")
+        self.chat_box.config(height=10, width=50)
+        self.chat_box.pack()
+        self.chat_box.insert(tk.END, example_text)
+        self.chat_box.focus_set()
+        self.chat_box.bind('<Return>', lambda event=None: self.get_chat_results())
+
+    def get_chat_results(self):
+        user_input = self.chat_box.get("1.0", "end-1c")
+        api_call = APICall(user_input)
+        self.display_chat_results(api_call.prepare_suggestions())
+
+    def display_chat_results(self, suggestions:list):
+        self.clear_display()
+        suggestions_display = ""
+        for word in "\n".join(suggestions):
+            suggestions_display += word
+        self.chat_display = tk.Label(self, text=suggestions_display)
+        self.chat_display.pack()
+
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
         super().__init__()
@@ -109,6 +135,9 @@ class MenuFrame(tk.Frame):
         self.find_word_button = tk.Button(self, text="Let me choose an available word.", command=lambda: app.display_frame.show_available_words())
         self.find_word_button.pack(pady=30)
 
+        self.suggest_word_button = tk.Button(self, text="Suggest some words. (Powered by ChatGPT).", command=lambda: app.display_frame.show_chat_screen())
+        self.suggest_word_button.pack(pady=30)
+
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -123,6 +152,8 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
+# - Make third button where user can enter a description of their business to get back chatgpt suggestions for words.
+#       - Then the program will check if the suggested words are available.
 # - add layer where users can select the number they want to buy
 # - clean up display format for list of available numbers
 # - add error handling for when users put in numbers that are too long, wrong type, etc.

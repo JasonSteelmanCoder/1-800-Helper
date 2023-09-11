@@ -1,2 +1,6 @@
 # ignore sensitive information
 confidential.py
+.*\.pyc
+
+__pycache__.*
+.*\.cpython-310\.pyc
