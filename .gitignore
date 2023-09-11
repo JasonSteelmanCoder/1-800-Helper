@@ -3,4 +3,6 @@ confidential.py
 .*\.pyc
 
 __pycache__.*
+__pycache__/
 .*\.cpython-310\.pyc
+*.py[cod]

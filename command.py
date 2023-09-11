@@ -14,7 +14,7 @@ class Search():
         app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
         app.display_frame.desired_num_label.pack()
         
-        for phone_number in anf.get_available_phone_nums_long():
+        for phone_number in anf.NumberRetrieval.get_available_phone_nums_long():
             number_found = False
             if phone_number.endswith(desired_num):
                 number_found = True
@@ -47,7 +47,7 @@ class DisplayFrame(tk.Frame):
         self.clear_display()
         self.display_wait_message()
         available_combos = {}
-        for num in anf.get_available_phone_nums_short():
+        for num in anf.NumberRetrieval.get_available_phone_nums_short():
             prepared_num = wc.prepare_phone_number(num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:
@@ -113,9 +113,12 @@ class DisplayFrame(tk.Frame):
 
     def display_chat_results(self, suggestions:list):
         self.clear_display()
-        suggestions_display = ""
-        for word in "\n".join(suggestions):
-            suggestions_display += word
+        suggestions_display = "ChatGPT Suggestions:\n"
+        if suggestions:
+            for word in "\n".join(suggestions):
+                suggestions_display += word
+        else:
+            suggestions_display += "Sorry! Something went wrong. Please try again."
         self.chat_display = tk.Label(self, text=suggestions_display)
         self.chat_display.pack()
 
@@ -135,7 +138,7 @@ class MenuFrame(tk.Frame):
         self.find_word_button = tk.Button(self, text="Let me choose an available word.", command=lambda: app.display_frame.show_available_words())
         self.find_word_button.pack(pady=30)
 
-        self.suggest_word_button = tk.Button(self, text="Suggest some words. (Powered by ChatGPT).", command=lambda: app.display_frame.show_chat_screen())
+        self.suggest_word_button = tk.Button(self, text="Suggest some words. (Powered by ChatGPT)", command=lambda: app.display_frame.show_chat_screen())
         self.suggest_word_button.pack(pady=30)
 
 class MainApp(tk.Tk):
@@ -152,33 +155,14 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - Make third button where user can enter a description of their business to get back chatgpt suggestions for words.
-#       - Then the program will check if the suggested words are available.
+# - Make the chat display also check whether the words are available.
 # - add layer where users can select the number they want to buy
 # - clean up display format for list of available numbers
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - stop looking for 3 letter words and get a larger number of words from anf
-# - change anf (and its caller) so that it makes more numbers when you are looking for a specific word
 # - fix the InvalidPhoneNumber exception in word_checker.py
 # - make other modules OOP
 # - write unit tests
 # - clean up the comments
 # - add docstrings for each function
 
-
-
-# TESTING CALLS:
-# print(anf.get_available_phone_nums())
-# print(wc.find_num_for_word('pain'))
-# print(wc.prepare_phone_number('18001234567'))
-
-# available_nums_w_pain = [['9', '9', '9', '7', '2', '4', '6']]
-# available_nums_without_pain = [['9', '9', '9', '9', '9', '9', '9'], ['1', '2', '3', '4', '5', '6', '7']]
-# print(wc.search_available_nums_for_word('pain', available_nums_w_pain))
-# print(wc.search_available_nums_for_word('pain', available_nums_without_pain))
-
-# print(wc.find_words_for_num(['9', '4', '6', '4', '2', '7', '6']))
-#   Should yield ['zingaro', 'arm', 'bpm', 'bro', 'harm', 'micro']
-
-# for phone_num in anf.get_available_phone_nums():
-#     print(wc.find_words(wc.prepare_phone_number(phone_num)))

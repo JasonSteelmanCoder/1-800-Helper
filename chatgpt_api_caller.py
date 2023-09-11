@@ -26,8 +26,7 @@ class APICall():
         }
 
     def prepare_suggestions(self):
-
-        self.response = requests.post(self.url, headers=self.headers, data=json.dumps(self.data))
+        self.response = requests.post(self.url, headers=self.headers, data=json.dumps(self.data), timeout=30)
 
         if self.response.status_code == 200:
             self.response_data = self.response.json()
@@ -35,10 +34,10 @@ class APICall():
             suggestion_list = self.match_list(self.generated_text)
             return suggestion_list
         else:
-            print(f"Error: {self.response.status_code}\n{self.response.text}")
+            return f"Error: {self.response.status_code}\n{self.response.text}"
 
     def match_list(self, text):
-        list_regex = re.compile(r'"(\w*)",\n')
+        list_regex = re.compile(r"""["'](\w*)["'],""")
         mo = list_regex.findall(text, 1)
         return mo
 
