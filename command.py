@@ -121,14 +121,23 @@ class DisplayFrame(tk.Frame):
 
     def display_chat_results(self, suggestions:list):
         self.clear_display()
-        suggestions_display = "ChatGPT Suggestions:\n"
+        self.suggestions_header = tk.Label(self, text="ChatGPT Suggestions:\n")
+        self.suggestions_header.pack()
         if suggestions:
-            for word in "\n".join(suggestions):
-                suggestions_display += word
+            self.number_retrieval = anf.NumberRetrieval()
+            self.available_numbers = self.number_retrieval.get_available_phone_nums_long()
+            for word in suggestions:
+                availability_message = None
+                available_num = wc.search_available_nums_for_word(word, self.available_numbers)
+                if available_num != None:
+                    availability_message = "Available!"
+                else:
+                    availability_message = "Not available."
+                label = tk.Label(self, text=f"{word}: {wc.find_num_for_word(word)} {availability_message}")
+                label.pack()
         else:
-            suggestions_display += "Sorry! Something went wrong. Please try again."
-        self.chat_display = tk.Label(self, text=suggestions_display)
-        self.chat_display.pack()
+            self.error_label = tk.Label(self, text="Sorry! Something went wrong. Please try again.")
+            self.error_label.pack()
 
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
@@ -167,9 +176,7 @@ if __name__ == "__main__":
 # - add layer where users can select the number they want to buy
 # - clean up display format for list of available numbers
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
-# - stop looking for 3 letter words and get a larger number of words from anf
 # - fix the InvalidPhoneNumber exception in word_checker.py
-# - make other modules OOP
 # - write unit tests
 # - clean up the comments
 # - add docstrings for each function

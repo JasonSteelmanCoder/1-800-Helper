@@ -106,7 +106,7 @@ def find_words_for_num(phone_num : list[str]) -> list[str]:
 
 # Takes a desired word and returns the string of digits that spell it.
 def find_num_for_word(word : str) -> str:
-    letter_list = [letter for letter in word]
+    letter_list = [letter for letter in word.lower()]
     digit_list = []
     for letter in letter_list:
         for key, value in letter_assignments_plus_nums.items():
@@ -123,7 +123,7 @@ def search_available_nums_for_word(word : str, available_nums : list[str]) -> st
     needed_num = find_num_for_word(word)
     for digit_list in available_nums:
         digit_str = ''.join(digit_list)
-        if needed_num in digit_str:
+        if digit_str.endswith(needed_num):
             return digit_list
-        else:   # when the word cannot be made by the available numbers
-            return None
+    return None
+
