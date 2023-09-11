@@ -21,7 +21,7 @@ class APICall():
 
         self.data = {
             "model": "gpt-3.5-turbo",
-            "messages": [{"role": "user", "content": f"A colleague of mine is thinking about getting a 1-800 number. Here is their description of themselves and their organization: '{self.user_message}' My colleague wants help coming up with words or phrases that they can spell using the last 4-7 digits of their 1-800 number. Will you please help me by coming up with 20 words that they could use? It would be helpful if you wrote the words in the form of a python list of strings. Remember: the words shouldn't be more than 7 letters long."}],
+            "messages": [{"role": "user", "content": f"A colleague of mine is thinking about getting a 1-800 number. Here is their description of their organization: '{self.user_message}' My colleague wants help coming up with words or phrases that they can spell using the last 4-7 digits of their 1-800 number. Will you please help me by coming up with 20 words that they could use? It would be helpful if you wrote the words in the form of a python list of strings."}],
             "temperature": 0.7
         }
 

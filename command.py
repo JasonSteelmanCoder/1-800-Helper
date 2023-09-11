@@ -1,3 +1,9 @@
+"""When someone has a 1-800 number, they often advertise it using a word. For example, 1-800-222-PAIN.
+The word is made using the letters that would appear on a number pad for the digits in the phone number.
+
+This program is meant to help a person who is choosing an available 1-800 number for their company.
+It will take a phone number as an input and find all of the words that can be spelled with those digits."""
+
 import available_num_finder as anf
 import word_checker as wc
 import tkinter as tk
@@ -14,7 +20,8 @@ class Search():
         app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
         app.display_frame.desired_num_label.pack()
         
-        for phone_number in anf.NumberRetrieval.get_available_phone_nums_long():
+        number_retrieval = anf.NumberRetrieval()
+        for phone_number in number_retrieval.get_available_phone_nums_long():
             number_found = False
             if phone_number.endswith(desired_num):
                 number_found = True
@@ -47,7 +54,8 @@ class DisplayFrame(tk.Frame):
         self.clear_display()
         self.display_wait_message()
         available_combos = {}
-        for num in anf.NumberRetrieval.get_available_phone_nums_short():
+        number_retrieval = anf.NumberRetrieval()
+        for num in number_retrieval.get_available_phone_nums_short():
             prepared_num = wc.prepare_phone_number(num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:

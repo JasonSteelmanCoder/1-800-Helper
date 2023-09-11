@@ -1,8 +1,6 @@
-"""When someone has a 1-800 number, they often advertise it using a word. For example, 1-800-222-PAIN.
-The word is made using the letters that would appear on a number pad for the digits in the phone number.
-
-This program is meant to help a person who is choosing an available 1-800 number for their company.
-It will take a phone number as an input and find all of the words that can be spelled with those digits."""
+"""This module stores the logic to do the underlying work of preparing phone numbers and checking for 
+matches with English words.
+"""
 
 import enchant
 
@@ -18,6 +16,19 @@ letter_assignments = {
     '7':['p', 'q', 'r', 's'], 
     '8':['t', 'u', 'v'], 
     '9':['w', 'x', 'y', 'z']
+}
+
+letter_assignments_plus_nums = {
+    '0':['0'], 
+    '1':['1'],
+    '2':['a', 'b', 'c', '2'], 
+    '3':['d', 'e', 'f', '3'], 
+    '4':['g', 'h', 'i', '4'], 
+    '5':['j', 'k', 'l', '5'], 
+    '6':['m', 'n', 'o', '6'], 
+    '7':['p', 'q', 'r', 's', '7'], 
+    '8':['t', 'u', 'v', '8'], 
+    '9':['w', 'x', 'y', 'z', '9']
 }
 
 # Throws an exception when the input is not a valid phone number.
@@ -98,7 +109,7 @@ def find_num_for_word(word : str) -> str:
     letter_list = [letter for letter in word]
     digit_list = []
     for letter in letter_list:
-        for key, value in letter_assignments.items():
+        for key, value in letter_assignments_plus_nums.items():
             for num in value:
                 if num == letter:
                     digit_list.append(key)
