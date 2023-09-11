@@ -121,20 +121,23 @@ class DisplayFrame(tk.Frame):
 
     def display_chat_results(self, suggestions:list):
         self.clear_display()
-        self.suggestions_header = tk.Label(self, text="ChatGPT Suggestions:\n")
-        self.suggestions_header.pack()
+        self.suggestions_header = tk.Label(self, text="ChatGPT Says:  Number:  Availability\n", font=("courier", 9))
+        self.suggestions_header.pack(anchor=tk.W)
         if suggestions:
             self.number_retrieval = anf.NumberRetrieval()
             self.available_numbers = self.number_retrieval.get_available_phone_nums_long()
             for word in suggestions:
-                availability_message = None
-                available_num = wc.search_available_nums_for_word(word, self.available_numbers)
-                if available_num != None:
-                    availability_message = "Available!"
-                else:
-                    availability_message = "Not available."
-                label = tk.Label(self, text=f"{word}: {wc.find_num_for_word(word)} {availability_message}")
-                label.pack()
+                if len(word) < 8:   # Sometimes GPT suggests words that are too long
+                    availability_message = None
+                    available_num = wc.search_available_nums_for_word(word, self.available_numbers)
+                    if available_num != None:
+                        availability_message = "Available!"
+                        font_color = "blue"
+                    else:
+                        availability_message = "Not available."
+                        font_color = "grey"
+                    label = tk.Label(self, text=f"{word}{' '*(15-len(word))}{wc.find_num_for_word(word)}{' '*(9-len(word))}{availability_message}", fg=font_color, font=("courier", 9))
+                    label.pack(anchor=tk.W)
         else:
             self.error_label = tk.Label(self, text="Sorry! Something went wrong. Please try again.")
             self.error_label.pack()
@@ -172,12 +175,14 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - Make the chat display also check whether the words are available.
 # - add layer where users can select the number they want to buy
+# - make available chat display labels clickable
 # - clean up display format for list of available numbers
+
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - fix the InvalidPhoneNumber exception in word_checker.py
 # - write unit tests
+
 # - clean up the comments
 # - add docstrings for each function
 
