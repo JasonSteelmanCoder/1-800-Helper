@@ -4,11 +4,24 @@ The word is made using the letters that would appear on a number pad for the dig
 This program is meant to help a person who is choosing an available 1-800 number for their company.
 It will take a phone number as an input and find all of the words that can be spelled with those digits."""
 
-import available_num_finder as anf
-import word_checker as wc
+import sys
 import tkinter as tk
 from tkinter import messagebox
+import available_num_finder as anf
+import word_checker as wc
 from chatgpt_api_caller import APICall
+
+class PurchaseCompleteFrame(tk.Frame):
+    def __init__(self, master):
+        self.master = master
+
+    def show_purchase_complete_frame(self, purchased_number):
+        app.display_frame.clear_display()
+        purchase_complete_label = tk.Label(app.display_frame, text=f"Congratulations!\nYou have successfully purchased the number:\n\n{purchased_number}\n\nClick a button on the left to find more numbers, OR\nClick the button below to leave the program.\n", pady=15)
+        purchase_complete_label.pack()
+        exit_button = tk.Button(app.display_frame, text="Exit", command=sys.exit)
+        exit_button.config(width=15)
+        exit_button.pack()
 
 class Search():
     def __init__(self, search_term, event=None):
@@ -158,8 +171,9 @@ class DisplayFrame(tk.Frame):
         self.update()
 
     def ask_user_to_purchase(self, offered_number, event=None):
-        answer = messagebox.askyesno("question", f"Do you want to purchase the number {offered_number}?")
-        return answer
+        purchase_answer = messagebox.askyesno("question", f"Do you want to purchase the number {offered_number}?")
+        if purchase_answer:
+            app.purchase_completion_frame.show_purchase_complete_frame(offered_number)
 
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
@@ -194,6 +208,7 @@ class MainApp(tk.Tk):
         self.chat_frame = ChatFrame(master=self.display_frame)
         self.show_some_available_words_frame = ShowSomeAvailableWordsFrame(master=self.display_frame)
         self.search_frame = SearchFrame(master=self.display_frame)
+        self.purchase_completion_frame = PurchaseCompleteFrame(master=self.display_frame)
 
         self.number_retrieval = anf.NumberRetrieval()
         self.available_numbers_long = self.number_retrieval.get_available_phone_nums_long()
@@ -203,10 +218,6 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - make available_number_labels call ask_user_to_purchase (for chat & show_available displays)
-# - clean up display format for list of available numbers
-# - make PurchaseCompleteFrame & instantiate it in MainApp
-
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - fix the InvalidPhoneNumber exception in word_checker.py
 # - write unit tests
