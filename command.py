@@ -7,6 +7,7 @@ It will take a phone number as an input and find all of the words that can be sp
 import available_num_finder as anf
 import word_checker as wc
 import tkinter as tk
+from tkinter import messagebox
 from chatgpt_api_caller import APICall
 
 class Search():
@@ -50,8 +51,9 @@ class SearchFrame(tk.Frame):
     
     def display_search_results(self, number_results):
         if number_results:      # When the return is not None
-            search_results = tk.Label(app.display_frame, text=f"The number you are looking for is available! It's {number_results}")
+            search_results = tk.Label(app.display_frame, text=f"The number you are looking for is available! It's {number_results}", fg="blue")
             search_results.pack()
+            search_results.bind("<Button-1>", lambda event, number_results=number_results: app.display_frame.ask_user_to_purchase(number_results))
         else:
             sorry_message = tk.Label(app.display_frame, text="Sorry. That number is not available.\nTry another word, OR\nPress the button on the left to see words that are available.")
             sorry_message.pack()
@@ -95,11 +97,17 @@ class ChatFrame(tk.Frame):
                     if available_num != None:
                         availability_message = "Available!"
                         font_color = "blue"
+                        cursor_assignment = "hand2"
+                        available_bool = True
                     else:
                         availability_message = "Not available."
                         font_color = "grey"
-                    label = tk.Label(app.display_frame, text=f"{word}{' '*(15-len(word))}{wc.find_num_for_word(word)}{' '*(9-len(word))}{availability_message}", fg=font_color, font=("courier", 9))
+                        cursor_assignment = "arrow"
+                        available_bool = False
+                    label = tk.Label(app.display_frame, text=f"{word}{' '*(15-len(word))}{wc.find_num_for_word(word)}{' '*(9-len(word))}{availability_message}", fg=font_color, font=("courier", 9), cursor=cursor_assignment)
                     label.pack(anchor=tk.W)
+                    if available_bool:
+                        label.bind("<Button-1>", lambda event, phone_num=available_num: app.display_frame.ask_user_to_purchase(phone_num))
         else:
             self.error_label = tk.Label(app.display_frame, text="Sorry! Something went wrong. Please try again.")
             self.error_label.pack()
@@ -113,15 +121,18 @@ class ShowSomeAvailableWordsFrame(tk.Frame):
         app.display_frame.clear_display()
         self.display_wait_message()
         available_combos = {}
-        for num in app.number_retrieval.get_available_phone_nums_short(app.available_numbers_long):
-            prepared_num = wc.prepare_phone_number(num)
+        for phone_num in app.number_retrieval.get_available_phone_nums_short(app.available_numbers_long):
+            prepared_num = wc.prepare_phone_number(phone_num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:
                 temp_words.sort(key=len, reverse=True)
-                available_combos[num] = temp_words
-        formatted_output = self.format_some_available_words(available_combos)
-        available_combos_label = tk.Label(app.display_frame, text=formatted_output, justify=tk.LEFT)
-        available_combos_label.pack(pady=20)
+                available_combos[phone_num] = temp_words
+        self.directions_label = tk.Label(app.display_frame, text="Here are some available numbers, and the words they spell.\n\nClick a number to purchase, OR\nClick Show_me_some_available_words again to see more.\n", pady=10)
+        self.directions_label.pack()
+        for selected_number, word_list in available_combos.items():
+            label = tk.Label(app.display_frame, text=f"{selected_number}: {[word for word in word_list]}", cursor="hand2", fg="blue")
+            label.pack(anchor=tk.W)
+            label.bind("<Button-1>", lambda event, offered_number=selected_number: app.display_frame.ask_user_to_purchase(offered_number))
         self.destroy_wait_message()
 
     def display_wait_message(self):
@@ -132,14 +143,6 @@ class ShowSomeAvailableWordsFrame(tk.Frame):
     def destroy_wait_message(self):
         self.wait_message.destroy()
         self.update()
-
-    def format_some_available_words(self, combos:dict) -> str:
-        combo_list = []
-        for item in combos.items():
-            combo_list.append(str(item))
-        combo_list.sort(key=len, reverse=True)
-        combo_str = "\n".join(combo_list)
-        return combo_str
 
 class DisplayFrame(tk.Frame):
     def __init__(self, master=None):
@@ -153,6 +156,10 @@ class DisplayFrame(tk.Frame):
         for widget in leftovers:
             widget.destroy()
         self.update()
+
+    def ask_user_to_purchase(self, offered_number, event=None):
+        answer = messagebox.askyesno("question", f"Do you want to purchase the number {offered_number}?")
+        return answer
 
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
@@ -196,10 +203,9 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - make purchase_offer_frame & instantiate it in MainApp
-# - make display labels for available numbers clickable (x3 pages)
+# - make available_number_labels call ask_user_to_purchase (for chat & show_available displays)
 # - clean up display format for list of available numbers
-# - make congratulations_frame & instantiate it in MainApp
+# - make PurchaseCompleteFrame & instantiate it in MainApp
 
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - fix the InvalidPhoneNumber exception in word_checker.py
