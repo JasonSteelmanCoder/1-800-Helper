@@ -20,8 +20,7 @@ class Search():
         app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
         app.display_frame.desired_num_label.pack()
         
-        number_retrieval = anf.NumberRetrieval()
-        for phone_number in number_retrieval.get_available_phone_nums_long():
+        for phone_number in app.available_numbers_long:
             number_found = False
             if phone_number.endswith(desired_num):
                 number_found = True
@@ -54,8 +53,7 @@ class DisplayFrame(tk.Frame):
         self.clear_display()
         self.display_wait_message()
         available_combos = {}
-        number_retrieval = anf.NumberRetrieval()
-        for num in number_retrieval.get_available_phone_nums_short():
+        for num in app.available_numbers_short:
             prepared_num = wc.prepare_phone_number(num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:
@@ -124,12 +122,10 @@ class DisplayFrame(tk.Frame):
         self.suggestions_header = tk.Label(self, text="ChatGPT Says:  Number:  Availability\n", font=("courier", 9))
         self.suggestions_header.pack(anchor=tk.W)
         if suggestions:
-            self.number_retrieval = anf.NumberRetrieval()
-            self.available_numbers = self.number_retrieval.get_available_phone_nums_long()
             for word in suggestions:
                 if len(word) < 8:   # Sometimes GPT suggests words that are too long
                     availability_message = None
-                    available_num = wc.search_available_nums_for_word(word, self.available_numbers)
+                    available_num = wc.search_available_nums_for_word(word, app.available_numbers_long)
                     if available_num != None:
                         availability_message = "Available!"
                         font_color = "blue"
@@ -150,16 +146,19 @@ class MenuFrame(tk.Frame):
         self.pack(side=tk.LEFT)
 
         self.label = tk.Label(self, text="Chose what you want to do:", bg="#4287f5")
-        self.label.pack(pady=50)
+        self.label.pack(pady=30)
 
         self.find_num_button = tk.Button(self, text="Check if my word is available.", command=lambda: app.display_frame.show_search_window())
-        self.find_num_button.pack(pady=20)
+        self.find_num_button.config(width=24, height=2)
+        self.find_num_button.pack(pady=10)
 
-        self.find_word_button = tk.Button(self, text="Let me choose an available word.", command=lambda: app.display_frame.show_available_words())
-        self.find_word_button.pack(pady=30)
+        self.suggest_word_button = tk.Button(self, text="Suggest some words.\n(Powered by ChatGPT)", command=lambda: app.display_frame.show_chat_screen())
+        self.suggest_word_button.config(width=24)
+        self.suggest_word_button.pack(pady=10)
 
-        self.suggest_word_button = tk.Button(self, text="Suggest some words. (Powered by ChatGPT)", command=lambda: app.display_frame.show_chat_screen())
-        self.suggest_word_button.pack(pady=30)
+        self.find_word_button = tk.Button(self, text="Show me some available words.", command=lambda: app.display_frame.show_available_words())
+        self.find_word_button.config(width=24, height=2)
+        self.find_word_button.pack(pady=10)
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -170,11 +169,17 @@ class MainApp(tk.Tk):
         self.menu_frame = MenuFrame(master=self)
         self.display_frame = DisplayFrame(master=self)
 
+        self.number_retrieval = anf.NumberRetrieval()
+        self.available_numbers_long = self.number_retrieval.get_available_phone_nums_long()
+        self.available_numbers_short = self.number_retrieval.get_available_phone_nums_short()
+
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
 
 # TODO:
+# - break display_frame into more manageable classes for each page
+
 # - add layer where users can select the number they want to buy
 # - make available chat display labels clickable
 # - clean up display format for list of available numbers
