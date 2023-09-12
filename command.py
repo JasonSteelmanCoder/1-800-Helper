@@ -49,11 +49,11 @@ class DisplayFrame(tk.Frame):
         search = Search(self.search_box.get())
         search.find_word_for_search_term()
 
-    def show_available_words(self):
+    def show_some_available_words(self):
         self.clear_display()
         self.display_wait_message()
         available_combos = {}
-        for num in app.available_numbers_short:
+        for num in app.number_retrieval.get_available_phone_nums_short(app.available_numbers_long):
             prepared_num = wc.prepare_phone_number(num)
             temp_words = wc.find_words_for_num(prepared_num)
             if temp_words:
@@ -156,7 +156,7 @@ class MenuFrame(tk.Frame):
         self.suggest_word_button.config(width=24)
         self.suggest_word_button.pack(pady=10)
 
-        self.find_word_button = tk.Button(self, text="Show me some available words.", command=lambda: app.display_frame.show_available_words())
+        self.find_word_button = tk.Button(self, text="Show me some available words.", command=lambda: app.display_frame.show_some_available_words())
         self.find_word_button.config(width=24, height=2)
         self.find_word_button.pack(pady=10)
 
@@ -171,13 +171,13 @@ class MainApp(tk.Tk):
 
         self.number_retrieval = anf.NumberRetrieval()
         self.available_numbers_long = self.number_retrieval.get_available_phone_nums_long()
-        self.available_numbers_short = self.number_retrieval.get_available_phone_nums_short()
 
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
 
 # TODO:
+# - make short list of available nums a subset of the long list 
 # - break display_frame into more manageable classes for each page
 
 # - add layer where users can select the number they want to buy
