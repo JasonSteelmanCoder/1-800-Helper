@@ -9,26 +9,45 @@ import word_checker as wc
 import tkinter as tk
 from chatgpt_api_caller import APICall
 
-class SearchFrame():
+class Search():
     def __init__(self, search_term, event=None):
         self.search_term = search_term
 
-    def find_word_for_search_term(self):
-        self.clear_search_results()
+    def find_number_for_search_term(self):
         desired_num = wc.find_num_for_word(self.search_term)
-
-        app.display_frame.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
-        app.display_frame.desired_num_label.pack()
-        
+        app.search_frame.display_desired_num(desired_num)        
         for phone_number in app.available_numbers_long:
             number_found = False
             if phone_number.endswith(desired_num):
                 number_found = True
-                self.display_search_results(phone_number)
+                app.search_frame.display_search_results(phone_number)
                 break
         if number_found == False:
-            self.display_search_results(None)
+            app.search_frame.display_search_results(None)
 
+class SearchFrame(tk.Frame):
+    def __init__(self, master):
+        super().__init__()
+        self.master = master
+
+    def show_search_window(self):
+        app.display_frame.clear_display()
+        search_directions = tk.Label(app.display_frame, text="Enter a word here to see if it is available.\nNote: words must be 3-7 letters.")
+        search_directions.pack(pady=40)
+        self.search_box = tk.Entry(app.display_frame)
+        self.search_box.pack(padx=20, pady=0)
+        self.search_box.focus_set()
+        self.search_box.bind('<Return>', lambda event=None: self.instantiate_search(event))
+
+    def instantiate_search(self, event=None):
+        self.clear_search_results()
+        self.search = Search(self.search_box.get())
+        self.search.find_number_for_search_term()
+
+    def display_desired_num(self, desired_num):
+        self.desired_num_label = tk.Label(app.display_frame, text=f"You are looking for a number ending with {desired_num}.")
+        self.desired_num_label.pack()
+    
     def display_search_results(self, number_results):
         if number_results:      # When the return is not None
             search_results = tk.Label(app.display_frame, text=f"The number you are looking for is available! It's {number_results}")
@@ -135,19 +154,6 @@ class DisplayFrame(tk.Frame):
             widget.destroy()
         self.update()
 
-    def instantiate_search(self, event=None):
-        self.search = SearchFrame(self.search_box.get())
-        self.search.find_word_for_search_term()
-
-    def show_search_window(self):
-        self.clear_display()
-        search_directions = tk.Label(self, text="Enter a word here to see if it is available.\nNote: words must be 3-7 letters.")
-        search_directions.pack(pady=40)
-        self.search_box = tk.Entry(self)
-        self.search_box.pack(padx=20, pady=0)
-        self.search_box.focus_set()
-        self.search_box.bind('<Return>', lambda event=None: self.instantiate_search(event))
-    
 class MenuFrame(tk.Frame):
     def __init__(self, master=None):
         super().__init__()
@@ -158,7 +164,7 @@ class MenuFrame(tk.Frame):
         self.label = tk.Label(self, text="Chose what you want to do:", bg="#4287f5")
         self.label.pack(pady=30)
 
-        self.find_num_button = tk.Button(self, text="Check if my word is available.", command=lambda: app.display_frame.show_search_window())
+        self.find_num_button = tk.Button(self, text="Check if my word is available.", command=lambda: app.search_frame.show_search_window())
         self.find_num_button.config(width=24, height=2)
         self.find_num_button.pack(pady=10)
 
@@ -180,6 +186,7 @@ class MainApp(tk.Tk):
         self.display_frame = DisplayFrame(master=self)
         self.chat_frame = ChatFrame(master=self.display_frame)
         self.show_some_available_words_frame = ShowSomeAvailableWordsFrame(master=self.display_frame)
+        self.search_frame = SearchFrame(master=self.display_frame)
 
         self.number_retrieval = anf.NumberRetrieval()
         self.available_numbers_long = self.number_retrieval.get_available_phone_nums_long()
@@ -189,9 +196,10 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - add layer where users can select the number they want to buy
-# - make available chat display labels clickable
+# - make purchase_offer_frame & instantiate it in MainApp
+# - make display labels for available numbers clickable (x3 pages)
 # - clean up display format for list of available numbers
+# - make congratulations_frame & instantiate it in MainApp
 
 # - add error handling for when users put in numbers that are too long, wrong type, etc.
 # - fix the InvalidPhoneNumber exception in word_checker.py
