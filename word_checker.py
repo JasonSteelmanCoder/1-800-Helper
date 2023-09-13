@@ -4,7 +4,9 @@ matches with English words.
 
 import enchant
 
+# A dictionary against which to check whether derived words are English words
 word_list = enchant.Dict("en_US")
+# The keyboard of a phone, with letters assigned to different digits
 letter_assignments = {
     '0':[], 
     '1':[],
@@ -17,7 +19,7 @@ letter_assignments = {
     '8':['t', 'u', 'v'], 
     '9':['w', 'x', 'y', 'z']
 }
-
+# The keyboard of a phone, this time with numbers included
 letter_assignments_plus_nums = {
     '0':['0'], 
     '1':['1'],
