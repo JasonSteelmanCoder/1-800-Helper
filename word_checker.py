@@ -32,9 +32,10 @@ letter_assignments_plus_nums = {
 }
 
 # Throws an exception when the input is not a valid phone number.
-class InvalidPhoneNumber(Exception):
+class InvalidPhoneNumberError(Exception):
     def __init__(self, message="The input is not a valid phone number"):
-        super().__init__()
+        self.message = message
+        super().__init__(self.message)
         self.message = message
 
 # Strips 1-800 or 800 off of the input and makes sure that it is a valid number. 
@@ -45,9 +46,9 @@ def prepare_phone_number(phone_num : str) -> list[str]:
             shortened_num = phone_num[4:]
             digit_list = [num for num in shortened_num]
         else:   # when the phone_num is too long or short
-            raise InvalidPhoneNumber
+            raise InvalidPhoneNumberError
     else:   # when the phone_num is not a string
-        raise InvalidPhoneNumber
+        raise InvalidPhoneNumberError
     return digit_list
 
 # Takes a phone number in the form of a list of digit strings.  
@@ -126,4 +127,3 @@ def search_available_nums_for_word(word : str, available_nums : list[str]) -> st
         if digit_str.endswith(needed_num):
             return digit_list
     return None
-

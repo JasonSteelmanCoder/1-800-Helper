@@ -1,8 +1,15 @@
 """When someone has a 1-800 number, they often advertise it using a word. For example, 1-800-222-PAIN.
 The word is made using the letters that would appear on a number pad for the digits in the phone number.
 
-This program is meant to help a person who is choosing an available 1-800 number for their company.
-It will take a phone number as an input and find all of the words that can be spelled with those digits."""
+This program is meant to help a person who is choosing an available 1-800 number for their company. To 
+accomplish that task, it will perform three main operations:
+
+1. It will take a word as input and find the digits that correspond with it
+2. It will take a description of the user's organization and ask ChatGPT for some good words to use
+3. It will take a phone number as an input and find all of the words that can be spelled with those digits.
+
+In each instance, the program will check if the resulting numbers are available, and, if a user selects
+the number, it will simulate them purchasing the number."""
 
 import sys
 import tkinter as tk
@@ -27,7 +34,13 @@ class Search():
     def __init__(self, search_term, event=None):
         self.search_term = search_term
 
+    def show_overlong_word_message(self):
+        overlong_word_label = tk.Label(app.display_frame, text="1-800 numbers only accommodate words up to seven letters long.\nPlease try a shorter word.")
+        overlong_word_label.pack()
+
     def find_number_for_search_term(self):
+        if len(self.search_term) > 7:
+            self.show_overlong_word_message()
         desired_num = wc.find_num_for_word(self.search_term)
         app.search_frame.display_desired_num(desired_num)        
         for phone_number in app.available_numbers_long:
@@ -171,7 +184,7 @@ class DisplayFrame(tk.Frame):
         self.update()
 
     def ask_user_to_purchase(self, offered_number, event=None):
-        purchase_answer = messagebox.askyesno("question", f"Do you want to purchase the number {offered_number}?")
+        purchase_answer = messagebox.askyesno(f"Purchase number?", f"Do you want to purchase the number {offered_number}?")
         if purchase_answer:
             app.purchase_completion_frame.show_purchase_complete_frame(offered_number)
 
@@ -218,10 +231,6 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - add error handling for when users put in numbers that are too long, wrong type, etc.
-# - fix the InvalidPhoneNumber exception in word_checker.py
 # - write unit tests
-
-# - clean up the comments
 # - add docstrings for each function
 
