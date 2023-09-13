@@ -1,8 +1,8 @@
-"""When someone has a 1-800 number, they often advertise it using a word. For example, 1-800-222-PAIN.
+"""When someone has a 1-800 number, they often advertise it using a word. For example, 1-800-222-MOVE.
 The word is made using the letters that would appear on a number pad for the digits in the phone number.
 
-This program is meant to help a person who is choosing an available 1-800 number for their company. To 
-accomplish that task, it will perform three main operations:
+This program is meant to help a person who is choosing an available 1-800 number for their organization. 
+To accomplish that task, it will perform three main operations:
 
 1. It will take a word as input and find the digits that correspond with it
 2. It will take a description of the user's organization and ask ChatGPT for some good words to use
@@ -51,15 +51,19 @@ class Search():
         if len(self.search_term) > 7:       # check that the number is short enough to be the end of a 1-800 number
             self.show_overlong_word_message()
         desired_num = wc.find_num_for_word(self.search_term)        # find the numerical ending that matches the search term
-        app.search_frame.display_desired_num(desired_num)       # tell the user what numerical ending they are looking for
-        for phone_number in app.available_numbers_long:     # check all the available numbers for the ending
-            number_found = False
-            if phone_number.endswith(desired_num):
-                number_found = True
-                app.search_frame.display_search_results(phone_number)       # show the user the available number
-                break
-        if number_found == False:
-            app.search_frame.display_search_results(None)       # tell the user that their number is not available
+        if desired_num == "":                                       # the input is blank
+            blank_input_message = tk.Label(app.display_frame, text="You need to input a word to find its matching numbers.")
+            blank_input_message.pack()
+        else:                                                       # the user gave some input
+            app.search_frame.display_desired_num(desired_num)       # tell the user what numerical ending they are looking for
+            for phone_number in app.available_numbers_long:     # check all the available numbers for the ending
+                number_found = False
+                if phone_number.endswith(desired_num):
+                    number_found = True
+                    app.search_frame.display_search_results(phone_number)       # show the user the available number
+                    break
+            if number_found == False:
+                app.search_frame.display_search_results(None)       # tell the user that their number is not available
 
 """This class displays the search window before and after the search, and instantiates the search class 
 when the user submits a search term in the entry box."""
@@ -288,5 +292,8 @@ if __name__ == "__main__":
     app.mainloop()
 
 # TODO:
-# - write unit tests
+# - write unit tests for word checker
+# - write unit tests for anf
+# - write unit tests for api_caller
+# - write unit tests for main_module
 
