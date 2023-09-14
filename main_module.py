@@ -25,9 +25,9 @@ class PurchaseCompleteWindow():
     def __init__(self, master):
         self.master = master
 
-    # A label congratulates the user and directs them to exit or click a button on the menu frame. 
-    # An exit button is displayed at the bottom of the frame.
     def show_purchase_complete_frame(self, purchased_number):
+        # A label congratulates the user and directs them to exit or click a button on the menu frame. 
+        # An exit button is displayed at the bottom of the frame.
         self.master.clear_display()
         purchase_complete_label = tk.Label(self.master, text=f"Congratulations!\nYou have successfully purchased the number:\n\n{purchased_number}\n\nClick a button on the left to find more numbers, OR\nClick the button below to leave the program.\n", pady=15)
         purchase_complete_label.pack()
@@ -43,14 +43,14 @@ class Search():
         self.available_numbers = available_numbers
         self.search_frame = search_frame
 
-    # If the user searches for a term that is more than seven letters long, this function gives them a 
-    # reminder that words above seven letters cannot have a matching 1-800 number.
     def show_overlong_word_message(self):
+        # If the user searches for a term that is more than seven letters long, this function gives them a 
+        # reminder that words above seven letters cannot have a matching 1-800 number.
         overlong_word_label = tk.Label(self.display_location, text="1-800 numbers only accommodate words up to seven letters long.\nPlease try a shorter word.")
         overlong_word_label.pack()
 
-    # Checks if there are any available numbers that match the user's word.
     def find_number_for_search_term(self):
+        # Checks if there are any available numbers that match the user's word.
         if len(self.search_term) > 7:       # check that the number is short enough to be the end of a 1-800 number
             self.show_overlong_word_message()
         desired_num = wc.find_num_for_word(self.search_term)        # find the numerical ending that matches the search term
@@ -75,9 +75,9 @@ class SearchWindow():
         self.available_numbers = available_numbers
         self.master = master
 
-    # Displays directions and a search box for the user and connects the search box with instantiating 
-    # the search class.
     def show_search_window(self):
+        # Displays directions and a search box for the user and connects the search box with instantiating 
+        # the search class.
         self.master.clear_display()
         search_directions = tk.Label(self.master, text="Enter a word here to see if it is available.\nNote: words must be 3-7 letters.")
         search_directions.pack(pady=40)
@@ -86,22 +86,22 @@ class SearchWindow():
         self.search_box.focus_set()
         self.search_box.bind('<Return>', lambda event=None: self.instantiate_search(event))
 
-    # Instantiates a search class and runs the search when the user submits a search term in the entry box
     def instantiate_search(self, event=None):
+        # Instantiates a search class and runs the search when the user submits a search term in the entry box
         self.clear_search_results()
         self.search = Search(self.search_box.get(), self.master, self.available_numbers, self)
         self.search.find_number_for_search_term()
 
-    # Shows the user the numerical ending that corresponds to their word. This is the numerical ending 
-    # that the program is looking to match with an available phone number.
     def display_desired_num(self, desired_num:str):
+        # Shows the user the numerical ending that corresponds to their word. This is the numerical ending 
+        # that the program is looking to match with an available phone number.
         self.desired_num_label = tk.Label(self.master, text=f"You are looking for a number ending with {desired_num}.")
         self.desired_num_label.pack()
     
-    # Displays the results of the search to the user. If the results are a phone number string, then it 
-    # offers that phone number to the user. If the results are None, it informs the user that the number 
-    # is not available.
     def display_search_results(self, number_results:str|None):
+        # Displays the results of the search to the user. If the results are a phone number string, then it 
+        # offers that phone number to the user. If the results are None, it informs the user that the number 
+        # is not available.
         if number_results:      # When a phone number is returned
             search_results = tk.Label(self.master, text=f"The number you are looking for is available! It's {number_results}", fg="blue")
             search_results.pack()
@@ -111,9 +111,9 @@ class SearchWindow():
             sorry_message = tk.Label(self.master, text="Sorry. That number is not available.\nTry another word, OR\nPress the button on the left to see words that are available.")
             sorry_message.pack()
 
-    # Clears previous messages about whether or not a number is available, so that the user can make a 
-    # new search.
     def clear_search_results(self):
+        # Clears previous messages about whether or not a number is available, so that the user can make a 
+        # new search.
         for i in range(len(self.master.winfo_children())-1, -1, -1):
             if i > 1:
                 self.master.winfo_children()[i].destroy()
@@ -126,8 +126,8 @@ class ChatWindow():
         self.available_numbers = available_numbers
         self.master=master
 
-    # Displays the chat screen in the display frame. 
     def show_chat_screen(self):
+        # Displays the chat screen in the display frame. 
         self.master.clear_display()       # Get rid of previous display widgets
         self.chat_directions = tk.Label(self.master, pady=20, text="Write a short description of your organization.\nInclude aspects that you would like to highlight in your marketing.\nThen press enter.")
         self.chat_directions.pack()
@@ -141,16 +141,16 @@ class ChatWindow():
         # when the user presses enter, their text is sent off to chatgpt for suggestions
         self.chat_box.bind('<Return>', lambda event=None: self.get_chat_results())
 
-    # Calls the API on the user's input
     def get_chat_results(self):
+        # Calls the API on the user's input
         user_input = self.chat_box.get("1.0", "end-1c")     # Get the user's input from the text box
         api_call = APICall(user_input)      # Instantiate the APICall class
         self.display_chat_results(api_call.prepare_suggestions())       # Calls the API and displays the results
 
-    # Displays GPT's list of suggested words, along with their corresponding phone numbers and whether 
-    # the phone numbers are available. All of this info is neatly formatted in columns and available 
-    # numbers are clickable. If GPT does not return a list, an error message is displayed.
     def display_chat_results(self, suggestions:list):
+        # Displays GPT's list of suggested words, along with their corresponding phone numbers and whether 
+        # the phone numbers are available. All of this info is neatly formatted in columns and available 
+        # numbers are clickable. If GPT does not return a list, an error message is displayed.
         self.master.clear_display()
         # Display column headers
         self.suggestions_header = tk.Label(self.master, text="ChatGPT Says:  Number:  Availability\n", font=("courier", 9))
@@ -187,8 +187,8 @@ class ShowSomeAvailableWordsWindow():
         self.available_numbers = available_numbers
         self.master=master
 
-    # Finds available words and displays them as clickable labels that lead to a purchase offer window.
     def show_some_available_words(self):
+        # Finds available words and displays them as clickable labels that lead to a purchase offer window.
         self.master.clear_display()
         self.display_wait_message()
         available_combos = {}       # phone numbers will be keys and lists of words spelled from those numbers will be values
@@ -208,14 +208,14 @@ class ShowSomeAvailableWordsWindow():
             label.bind("<Button-1>", lambda event, offered_number=selected_number: self.master.ask_user_to_purchase(offered_number))
         self.destroy_wait_message()
 
-    # Displays a wait message
     def display_wait_message(self):
+        # Displays a wait message
         self.wait_message = tk.Label(self.master, text="Finding available words...")
         self.wait_message.pack()
         self.master.update()
 
-    # Called when loading is finished to get rid of wait message.
     def destroy_wait_message(self):
+        # Called when loading is finished to get rid of wait message.
         self.wait_message.destroy()
         self.master.update()
 
@@ -231,17 +231,17 @@ class DisplayFrame(tk.Frame):
         self.pack_propagate(False)
         self.pack(side=tk.RIGHT)
 
-    # Clears all widgets from display frame, so that a new screen can appear
     def clear_display(self):
+        # Clears all widgets from display frame, so that a new screen can appear
         leftovers = self.winfo_children()
         for widget in leftovers:
             widget.destroy()
         self.update()
 
-    # A message box appears asking the user if they want to purchase the offered_number. The user has 
-    # the option to choose yes/no. If the user chooses yes, they are directed to the 'purchase complete' 
-    # window. If they choose no, nothing happens.
     def ask_user_to_purchase(self, offered_number:str, event=None):
+        # A message box appears asking the user if they want to purchase the offered_number. The user has 
+        # the option to choose yes/no. If the user chooses yes, they are directed to the 'purchase complete' 
+        # window. If they choose no, nothing happens.
         purchase_answer = messagebox.askyesno(f"Purchase number?", f"Do you want to purchase the number {offered_number}?")
         if purchase_answer:         # If the chooser clicks yes
             app.purchase_completion_frame.show_purchase_complete_frame(offered_number)

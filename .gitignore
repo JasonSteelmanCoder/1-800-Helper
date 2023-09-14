@@ -3,6 +3,7 @@ confidential.py
 test_main_module.py
 .*\.pyc
 
+*.pyc
 __pycache__.*
 __pycache__/
 .*\.cpython-310\.pyc

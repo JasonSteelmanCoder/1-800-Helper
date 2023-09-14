@@ -30,8 +30,10 @@ class APICall():
             "temperature": 0.7
         }
 
-    # This function makes the call to the API and returns the list of suggestion strings from the response
     def prepare_suggestions(self):
+
+        # Makes the call to the API and returns the list of suggestion strings from the response
+
         self.response = requests.post(self.url, headers=self.headers, data=json.dumps(self.data), timeout=30)
 
         if self.response.status_code == 200:
@@ -42,8 +44,10 @@ class APICall():
         else:
             return f"Error: {self.response.status_code}\n{self.response.text}"
 
-    # This function recognizes suggested words inside of the response content by seeking words in quotation marks
     def match_list(self, text):
+
+        # Recognizes suggested words inside of the response content by seeking words in quotation marks
+        
         list_regex = re.compile(r"""["'](\w*)["'],""")
         mo = list_regex.findall(text, 1)
         return mo

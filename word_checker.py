@@ -40,9 +40,9 @@ class InvalidPhoneNumberError(Exception):
         super().__init__(self.message)
         self.message = message
 
-# Strips 1-800 or 800 off of the input and makes sure that it is a valid number. 
-# Then returns number as a list of digit strings
 def prepare_phone_number(phone_num : str) -> list[str]:
+    # Strips 1-800 or 800 off of the input and makes sure that it is a valid number. 
+    # Then returns number as a list of digit strings
     if type(phone_num) == str:
         if len(phone_num) == 11:
             shortened_num = phone_num[4:]
@@ -53,9 +53,9 @@ def prepare_phone_number(phone_num : str) -> list[str]:
         raise InvalidPhoneNumberError
     return digit_list
 
-# Takes a phone number in the form of a list of digit strings.  
-# Outputs a list of words that can be spelled using that phone number.
 def find_words_for_num(phone_num : list[str]) -> list[str]:
+    # Takes a phone number in the form of a list of digit strings.  
+    # Outputs a list of words that can be spelled using that phone number.
     letters_list = []
     for digit in phone_num:
         if digit == '0':
@@ -107,9 +107,9 @@ def find_words_for_num(phone_num : list[str]) -> list[str]:
 
     return solution_words
 
-# Takes a desired word and returns the string of digits that spell it. Returns an empty string if passed 
-# an empty string. 
 def find_num_for_word(word : str) -> str:
+    # Takes a desired word and returns the string of digits that spell it. Returns an empty string if passed 
+    # an empty string. 
     letter_list = [letter for letter in word.lower()]
     digit_list = []
     for letter in letter_list:
@@ -120,10 +120,10 @@ def find_num_for_word(word : str) -> str:
     phone_num = ''.join(digit_list)
     return phone_num
 
-# Given a desired word and a list of available numbers, this function outputs the number that 
-# spells the desired word. The number is in the form of a string. If the word is not available, the
-# function will return None.
 def search_available_nums_for_word(word : str, available_nums : list[str]) -> str|None:
+    # Given a desired word and a list of available numbers, this function outputs the number that 
+    # spells the desired word. The number is in the form of a string. If the word is not available, the
+    # function will return None.
     needed_num = find_num_for_word(word)
     for digit_list in available_nums:
         digit_str = ''.join(digit_list)
