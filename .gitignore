@@ -1,5 +1,6 @@
 # ignore sensitive information
 confidential.py
+test_main_module.py
 .*\.pyc
 
 __pycache__.*
