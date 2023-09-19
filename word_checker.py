@@ -60,25 +60,14 @@ def find_words_for_num(phone_num : list[str]) -> list[str]:
 
     words = product(*(letter_assignments[digit] for digit in phone_num))
     
-    solution_words = []     # this is the ultimate solution that will be returned
+    solution_words = []
 
     for word in words:
         word = ''.join(word)
-        if word_list.check(word) == True:
-            if word not in solution_words:
-                solution_words.append(word)
-        if word_list.check(word[1:]) == True:
-            if word[1:] not in solution_words:
-                solution_words.append(word[1:])
-        if word_list.check(word[2:]) == True:
-            if word[2:] not in solution_words:
-                solution_words.append(word[2:])
-        if word_list.check(word[3:]) == True:
-            if word[3:] not in solution_words:
-                solution_words.append(word[3:])
-        if word_list.check(word[4:]) == True:
-            if word[4:] not in solution_words:
-                solution_words.append(word[4:])
+        for i in range(0, 5):
+            if word_list.check(word[i:]) == True:
+                if word[i:] not in solution_words:
+                    solution_words.append(word[i:])
         
     return solution_words
 
