@@ -2,6 +2,7 @@
 matches with English words.
 """
 
+from itertools import product
 import enchant
 
 # A dictionary against which to check whether derived words are English words
@@ -56,55 +57,29 @@ def prepare_phone_number(phone_num : str) -> list[str]:
 def find_words_for_num(phone_num : list[str]) -> list[str]:
     # Takes a phone number in the form of a list of digit strings.  
     # Outputs a list of words that can be spelled using that phone number.
-    letters_list = []
-    for digit in phone_num:
-        if digit == '0':
-            letters_list.append([digit])
-        elif digit == '1':
-            letters_list.append([digit])
-        else:   # when the digit has letters assigned to it
-            key_letters = letter_assignments[digit]
-            letters_list.append(key_letters)
-    letter_lists = []
-    for letter0 in letters_list[0]:
-        for letter1 in letters_list[1]:
-            for letter2 in letters_list[2]:
-                for letter3 in letters_list[3]:
-                    for letter4 in letters_list[4]:
-                        for letter5 in letters_list[5]:
-                            for letter6 in letters_list[6]: 
-                                potential_word = []
-                                potential_word.append(letter0)
-                                potential_word.append(letter1)
-                                potential_word.append(letter2)
-                                potential_word.append(letter3)
-                                potential_word.append(letter4)
-                                potential_word.append(letter5)
-                                potential_word.append(letter6)
-                                letter_lists.append(potential_word)
+
+    words = product(*(letter_assignments[digit] for digit in phone_num))
     
-    words = []
-    for letter_list in letter_lists:
-        words.append(''.join(letter_list))
-    
-    solution_words = []
+    solution_words = []     # this is the ultimate solution that will be returned
 
     for word in words:
-        if word_list.check(word) == True:
-            solution_words.append(word)
-    
-    shortened_words = []
-    for word in words:
-        shortened_words.append(word[1:])
-        shortened_words.append(word[2:])
-        shortened_words.append(word[3:])
-        shortened_words.append(word[4:])
-
-    for word in shortened_words:
+        word = ''.join(word)
         if word_list.check(word) == True:
             if word not in solution_words:
                 solution_words.append(word)
-
+        if word_list.check(word[1:]) == True:
+            if word[1:] not in solution_words:
+                solution_words.append(word[1:])
+        if word_list.check(word[2:]) == True:
+            if word[2:] not in solution_words:
+                solution_words.append(word[2:])
+        if word_list.check(word[3:]) == True:
+            if word[3:] not in solution_words:
+                solution_words.append(word[3:])
+        if word_list.check(word[4:]) == True:
+            if word[4:] not in solution_words:
+                solution_words.append(word[4:])
+        
     return solution_words
 
 def find_num_for_word(word : str) -> str:
