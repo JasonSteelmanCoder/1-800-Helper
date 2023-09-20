@@ -54,29 +54,3 @@ class APICall():
 
 if __name__ == "__main__":
     main_instance = APICall()
-
-# TESTING
-# print(main_instance.match_list("""
-#     Sure! Here is a list of 20 words or phrases that can be spelled using the last 4-7 digits of a 1-800 number:
-
-# ```python
-# words = [
-#     "FAST",
-#     "TAXI",
-#     "BLOW",
-#     "HAIR",
-#     "BACK",
-#     "FAXI",
-#     "TOWN",
-#     "FAIR",
-#     "RIDE",
-#     "CALL",
-#     "CAB",
-#     "DRIVE",
-#     "LIMO",
-#     "CARS",
-#     "MOVE",
-#     "JUMP",
-#     "RUSH",
-#     "SPEED",
-# """))

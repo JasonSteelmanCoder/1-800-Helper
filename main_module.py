@@ -297,7 +297,3 @@ if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
 
-# TODO:
-# - write unit tests for anf
-# - write unit tests for api_caller
-
