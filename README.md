@@ -1,5 +1,5 @@
 # 1-800-Helper
-This is a program meant to help someone find an available 1800 number for their organization.
+A program meant to help someone find an available 1800 number for their organization.
 
 The program has three main tools for the user:
 - Find the number for a word that the user enters
